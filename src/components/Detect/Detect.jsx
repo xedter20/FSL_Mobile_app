@@ -56,6 +56,32 @@ const Detect = () => {
     console.log = function () { };
   }
 
+  // Custom drawing functions
+  const drawLandmarksCustom = (ctx, landmarks, color = "#FF0000", radius = 5) => {
+    landmarks.forEach((landmark) => {
+      ctx.beginPath();
+      ctx.arc(landmark.x, landmark.y, radius, 0, 2 * Math.PI);
+      ctx.fillStyle = color;
+      ctx.fill();
+    });
+  };
+
+  const drawConnectorsCustom = (ctx, landmarks, connections, color = "#00FF00", lineWidth = 2) => {
+    connections.forEach(([startIdx, endIdx]) => {
+      const start = landmarks[startIdx];
+      const end = landmarks[endIdx];
+
+      if (start && end) {
+        ctx.beginPath();
+        ctx.moveTo(start.x, start.y);
+        ctx.lineTo(end.x, end.y);
+        ctx.lineWidth = lineWidth;
+        ctx.strokeStyle = color;
+        ctx.stroke();
+      }
+    });
+  };
+
   const predictWebcam = useCallback(() => {
     if (runningMode === "IMAGE") {
       setRunningMode("VIDEO");
@@ -91,12 +117,8 @@ const Detect = () => {
     // Draw the results on the canvas, if any.
     if (results.landmarks) {
       for (const landmarks of results.landmarks) {
-        drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
-          color: "#00FF00",
-          lineWidth: 5,
-        });
-
-        drawLandmarks(canvasCtx, landmarks, { color: "#FF0000", lineWidth: 2 });
+        drawConnectorsCustom(canvasCtx, landmarks, HAND_CONNECTIONS, "#00FF00", 5);
+        drawLandmarksCustom(canvasCtx, landmarks, "#FF0000", 2);
       }
     }
     if (results.gestures.length > 0) {
