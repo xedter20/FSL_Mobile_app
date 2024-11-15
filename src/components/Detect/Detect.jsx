@@ -170,25 +170,25 @@ const Detect = () => {
         countMap.set(item.SignDetected, count + 1);
       }
 
-      const sortedArray = Array.from(countMap.entries()).sort(
-        (a, b) => b[1] - a[1]
-      );
+      // const sortedArray = Array.from(countMap.entries()).sort(
+      //   (a, b) => b[1] - a[1]
+      // );
 
-      const outputArray = sortedArray
-        .slice(0, 5)
-        .map(([sign, count]) => ({ SignDetected: sign, count }));
+      // const outputArray = sortedArray
+      //   .slice(0, 5)
+      //   .map(([sign, count]) => ({ SignDetected: sign, count }));
 
       // object to send to action creator
-      const data = {
-        signsPerformed: outputArray,
-        id: uuidv4(),
-        username: user?.name,
-        userId: user?.userId,
-        createdAt: String(endTime),
-        secondsSpent: Number(timeElapsed),
-      };
+      // const data = {
+      //   signsPerformed: outputArray,
+      //   id: uuidv4(),
+      //   username: user?.name,
+      //   userId: user?.userId,
+      //   createdAt: String(endTime),
+      //   secondsSpent: Number(timeElapsed),
+      // };
 
-      dispatch(addSignData(data));
+      // dispatch(addSignData(data));
       setDetectedData([]);
     } else {
       setWebcamRunning(true);
@@ -250,7 +250,7 @@ const Detect = () => {
           </div>
         </div>
 
-        <div className="signlang_imagelist-container">
+        {/* <div className="signlang_imagelist-container">
           <h2 className="gradient__text">Image</h2>
 
           <div className="signlang_image-div">
@@ -262,7 +262,7 @@ const Detect = () => {
               </h3>
             )}
           </div>
-        </div>
+        </div> */}
       </div>
     </>
   );
