@@ -16,6 +16,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { addSignData } from "../../redux/actions/signdataaction";
 import ProgressBar from "./ProgressBar/ProgressBar";
 
+// import DisplayImg from "../../assests/displayGif.gif";
+
 let startTime = "";
 
 const Detect = () => {
@@ -32,6 +34,8 @@ const Detect = () => {
   const [detectedData, setDetectedData] = useState([]);
 
   const user = useSelector((state) => state.auth?.user);
+
+  const { accessToken } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
 
@@ -55,32 +59,6 @@ const Detect = () => {
   ) {
     console.log = function () { };
   }
-
-  // Custom drawing functions
-  const drawLandmarksCustom = (ctx, landmarks, color = "#FF0000", radius = 5) => {
-    landmarks.forEach((landmark) => {
-      ctx.beginPath();
-      ctx.arc(landmark.x, landmark.y, radius, 0, 2 * Math.PI);
-      ctx.fillStyle = color;
-      ctx.fill();
-    });
-  };
-
-  const drawConnectorsCustom = (ctx, landmarks, connections, color = "#00FF00", lineWidth = 2) => {
-    connections.forEach(([startIdx, endIdx]) => {
-      const start = landmarks[startIdx];
-      const end = landmarks[endIdx];
-
-      if (start && end) {
-        ctx.beginPath();
-        ctx.moveTo(start.x, start.y);
-        ctx.lineTo(end.x, end.y);
-        ctx.lineWidth = lineWidth;
-        ctx.strokeStyle = color;
-        ctx.stroke();
-      }
-    });
-  };
 
   const predictWebcam = useCallback(() => {
     if (runningMode === "IMAGE") {
@@ -117,12 +95,15 @@ const Detect = () => {
     // Draw the results on the canvas, if any.
     if (results.landmarks) {
       for (const landmarks of results.landmarks) {
-        drawConnectorsCustom(canvasCtx, landmarks, HAND_CONNECTIONS, "#00FF00", 5);
-        drawLandmarksCustom(canvasCtx, landmarks, "#FF0000", 2);
+        drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
+          color: "#00FF00",
+          lineWidth: 5,
+        });
+
+        drawLandmarks(canvasCtx, landmarks, { color: "#FF0000", lineWidth: 2 });
       }
     }
     if (results.gestures.length > 0) {
-
       setDetectedData((prevData) => [
         ...prevData,
         {
@@ -132,7 +113,6 @@ const Detect = () => {
 
       setGestureOutput(results.gestures[0][0].categoryName);
       setProgress(Math.round(parseFloat(results.gestures[0][0].score) * 100));
-
     } else {
       setGestureOutput("");
       setProgress("");
@@ -192,25 +172,25 @@ const Detect = () => {
         countMap.set(item.SignDetected, count + 1);
       }
 
-      // const sortedArray = Array.from(countMap.entries()).sort(
-      //   (a, b) => b[1] - a[1]
-      // );
+      const sortedArray = Array.from(countMap.entries()).sort(
+        (a, b) => b[1] - a[1]
+      );
 
-      // const outputArray = sortedArray
-      //   .slice(0, 5)
-      //   .map(([sign, count]) => ({ SignDetected: sign, count }));
+      const outputArray = sortedArray
+        .slice(0, 5)
+        .map(([sign, count]) => ({ SignDetected: sign, count }));
 
       // object to send to action creator
-      // const data = {
-      //   signsPerformed: outputArray,
-      //   id: uuidv4(),
-      //   username: user?.name,
-      //   userId: user?.userId,
-      //   createdAt: String(endTime),
-      //   secondsSpent: Number(timeElapsed),
-      // };
+      const data = {
+        signsPerformed: outputArray,
+        id: uuidv4(),
+        username: user?.name,
+        userId: user?.userId,
+        createdAt: String(endTime),
+        secondsSpent: Number(timeElapsed),
+      };
 
-      // dispatch(addSignData(data));
+      dispatch(addSignData(data));
       setDetectedData([]);
     } else {
       setWebcamRunning(true);
@@ -245,10 +225,10 @@ const Detect = () => {
     loadGestureRecognizer();
   }, [runningMode]);
 
-
   return (
     <>
       <div className="signlang_detection-container">
+
         <div style={{ position: "relative" }}>
           <Webcam
             audio={false}
@@ -272,7 +252,7 @@ const Detect = () => {
           </div>
         </div>
 
-        <div className="signlang_imagelist-container">
+        {/* <div className="signlang_imagelist-container">
           <h2 className="gradient__text">Image</h2>
 
           <div className="signlang_image-div">
@@ -284,7 +264,8 @@ const Detect = () => {
               </h3>
             )}
           </div>
-        </div>
+        </div> */}
+
       </div>
     </>
   );

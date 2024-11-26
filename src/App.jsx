@@ -7,7 +7,8 @@ import {
   Login,
   Detect,
   NotFound,
-  Dashboard
+  Dashboard,
+
 } from './components';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -66,6 +67,17 @@ function App() {
             </Layout>
           }
         />
+
+        {/* <Route
+          exact
+          path="/detectFlowers"
+          element={
+            <Layout>
+              <DetectFlowers />
+            </Layout>
+          }
+        /> */}
+
 
         {/* <Route
           exact
